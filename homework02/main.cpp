@@ -46,6 +46,7 @@ typedef struct
     QString num;
     QString name;
     QVector<int> scores;
+    QList<QString> student;
 } studData;
 
 QDebug operator<< (QDebug d, const studData &data)
@@ -119,19 +120,34 @@ class ScoreSorter
 {
 public:
     ScoreSorter(QString dataFile);
-    // ...
-    // 请补全该类，使其实现上述要求
-    // ...
+private:
+      QString sorter;
+      QVector<studData> stu;
+      QStringList line；
 }
 
-// 请补全
-ScoreSorter::ScoreSorter(QString dataFile){
+ScoreSorter::ScoreSorter(QString dataFile)
+{
+    sorter=dataFile;
 }
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    // 自定义qDebug
+    studData brief;
+        QString string(file.readLine());
+        line=string.split(" ",QString::SkipEmptyParts);
+        while(!file.atEnd())
+        {
+            QString st(file.readLine());
+            brief.student=st.split(" ",QString::SkipEmptyParts);
+            if(brief.student.last()=="\n")
+                brief.student.removeLast();
+            if(brief.student.size()==0)
+                continue;
+            stu.append(brief);
+        }
+        file.close();
 }
 
 int main()
