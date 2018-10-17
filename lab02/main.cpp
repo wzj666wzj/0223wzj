@@ -1,49 +1,37 @@
 #include <QCoreApplication>
-#include <QDebug>
+#include<QDebug>
+#include<QList>
+
+typedef quint32 word;
+typedef quint8 byte;
+
+#define str(s) #s//字符串转译
+
+#define word_hhi(x) ((byte)((word)((word)(x)>>24)))//最高八位
+#define word_lhi(x) ((byte)((word)((word)(x)>>16)&255))//次高八位
+#define word_hlo(x) ((byte)(((word)(x)>>8)&255))//次低八位
+#define word_llo(x) ((byte)((word)(x)&255))//最低八位
+
+#define max(x,y) (((x)>(y))?(x):(y))//求最大值
+#define min(x,y) (((x)<(y))?(x):(y))//求最小值
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
-    QVector<QString> number,name,t1,t2;
-    number<<"1403130209"<<"1403140101"<<"1403140102"<<"1403140103"; //输入数据
-    name<<"鲁智深"<<"林冲"<<"宋江"<<"武松";
-    t1<<"80"<<"82"<<"76"<<"88";
-    t2<<"72"<<"76"<<"85"<<"80";
-    QVector<QVector<QString>> transcript;
-    transcript<<number<<name<<t1<<t2;
-    qDebug("成绩单如下:");//输出数据
-    qDebug()<<"学号"<<"\t\t"<<"姓名"<<"\t\t"<<"课程1"<<'\t'<<"课程2";
-        for(int i=0;i<4;i++)
-            qDebug()<<number.at(i).toInt()<<"\t"
-                    <<name.at(i)<<"\t"
-                    <<t1.at(i).toInt()<<"\t"
-                    <<t2.at(i).toInt();
-    qDebug()<<"按姓名排序：";
-    std::sort(name.begin(),name.end(),std::greater<QString>());
-    int i,j;
-    for(i=0;i<name.size();i++)
-    {
-        for(j=0;j<name.size();j++)
-            if(name.at(i)==transcript.at(1).at(j))
-                break;
-        qDebug()<<transcript.at(0).at(j)<<transcript.at(1).at(j)<<transcript.at(2).at(j)<<transcript.at(3).at(j);
-    }
-    qDebug()<<"按课程1的成绩排序：";
-    std::sort(t1.begin(),t1.end(),std::greater<QString>());
-    for(i=0;i<t1.size();i++)
-    {
-        for(j=0;j<t1.size();j++)
-            if(t1.at(i)==transcript.at(2).at(j))
-        break;
-        qDebug()<<transcript.at(0).at(j)<<transcript.at(1).at(j)<<transcript.at(2).at(j)<<transcript.at(3).at(j);
-    }
-    qDebug()<<"按课程2的成绩排序：";
-    std::sort(t2.begin(),t2.end(),std::greater<QString>());
-    for(i=0;i<t2.size();i++)
-    {
-        for(j=0;j<t2.size();j++)
-            if(t2.at(i)==transcript.at(3).at(j))
-                break;
-        qDebug()<<transcript.at(0).at(j)<<transcript.at(1).at(j)<<transcript.at(2).at(j)<<transcript.at(3).at(j);
-    }
-    return a.exec();
+    QCoreApplication a(argc,argv);
+    int i=0x12345678;
+    QList<qint8> values;//将结果存入此地址
+    values.append(word_hhi(i));//添加新对象
+    values.append(word_lhi(i));//添加新对象
+    values.append(word_hlo(i));//添加新对象
+    values.append(word_llo(i));//添加新对象
+    int j;
+    j=(values.at(2)<<24)+(values.at(0)<<16)+(values.at(3)<<8)+values.at(1);//重组数的值
+    qDebug("原始值:0x%x==%d\n最低八位:0x%x==%d\n次低八位:0x%x==%d\n次高八位:0x%x==%d\n最高八位:0x%x==%d\n",
+    i,i,values.at(3),values.at(3),values.at(2),values.at(2),values.at(1),values.at(1),values.at(0),values.at(0));
+    qDebug("最高八位和次高八位的最大值:0x%x(%d)\n次低八位和最低八位的最小值:0x%x(%d)",
+    max(values.at(0),values.at(1)),max(values.at(1),values.at(0)),min(values.at(2),values.at(3)),min(values.at(3),values.at(2)));
+    qDebug("重新组合后的数值:0x%x(%d)",j,j);
+    qDebug()<<"排序前:"<<values;
+    std::sort(values.begin(),values.end(),std::greater<qint8>());//从大到小进行排序
+    qDebug()<<"排序后:"<<values;
+    return 0;
 }
